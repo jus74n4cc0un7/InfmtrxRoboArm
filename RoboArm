@@ -42,6 +42,8 @@ void setup() {
   servo06.write(servo6PPos);
 }
 void loop() {
+    if (digitalRead(13) == 0) {
+        
   // Check for incoming data
   if (Bluetooth.available() > 0) {
     dataIn = Bluetooth.readString();  // Read the data as string
@@ -298,4 +300,26 @@ void runservo() {
       }
     }
   }
+    }
+    else {
+        
+  // Pass data to servos
+  if (data.startsWith("#")) { // Make sure data comes from glove
+    servo01.write(angz);
+    servo04.write(angx);
+  }
+
+  
+  
+    // Keep reading from HC-05 and send to Arduino Serial Monitor
+    if (BTserial.available())
+    
+      data = BTserial.readString();
+      angx = data.substring(1,4).toInt();
+      angy = data.substring(4,7).toInt();
+      angz = data.substring(7,10).toInt();
+      Serial.println(data); 
+      
+    }
+    }
 }
