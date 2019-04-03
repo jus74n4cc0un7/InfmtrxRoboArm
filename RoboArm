@@ -20,7 +20,7 @@ String dataIn = "";
 
 
 String data = "";
-int angz, angx, angy;
+int angz, angx, angy, angxP=0, angyP=0, angzP=0;
 
 void setup() {
   servo01.attach(5);
@@ -48,7 +48,7 @@ void setup() {
   servo06.write(servo6PPos);
 }
 void loop() {
-  if(digitalRead(13)==1) {
+  if(digitalRead(13)==1) { //################################################## APP MODE
   // Check for incoming data
   if (Bluetooth.available() > 0) {
     dataIn = Bluetooth.readString();  // Read the data as string
@@ -190,11 +190,17 @@ void loop() {
       index = 0;  // Index to 0
     }
   }
-}else{
+}else{ //################################################################# GLOVE MODE 
   // Pass data to servos
   if (data.startsWith("#")) {// Make sure data comes from glove
-    servo01.write(angz); // Waist
-    servo04.write(angx); // Pitch
+    if (abs(angzP-angz)>2) {
+      servo01.write(angz); // Waist
+      angzP = angz;
+    }
+    if (abs(angxP-angx)>2) {
+      servo04.write(angx); // Pitch
+      angxP = angx;
+    }
   }
 
   
