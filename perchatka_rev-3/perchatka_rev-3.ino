@@ -36,7 +36,7 @@
 
 #include <SimpleTimer.h>
 
-int BTdelay = 100;
+int BTdelay = 150;
 
 int angx, angy, angz;
 const int keyPin = 9;
