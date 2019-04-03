@@ -17,6 +17,11 @@ int servo01SP[50], servo02SP[50], servo03SP[50], servo04SP[50], servo05SP[50], s
 int speedDelay = 20;
 int index = 0;
 String dataIn = "";
+
+
+String data = "";
+int angz, angx, angy;
+
 void setup() {
   servo01.attach(5);
   servo02.attach(6);
@@ -24,8 +29,9 @@ void setup() {
   servo04.attach(8);
   servo05.attach(9);
   servo06.attach(10);
-  Bluetooth.begin(38400); // Default baud rate of the Bluetooth module
-  Bluetooth.setTimeout(1);
+  pinMode(13, INPUT);
+  Bluetooth.begin(9600); // Default baud rate of the Bluetooth module
+  Bluetooth.setTimeout(50);
   delay(20);
   // Robot arm initial position
   servo1PPos = 90;
@@ -42,8 +48,7 @@ void setup() {
   servo06.write(servo6PPos);
 }
 void loop() {
-    if (digitalRead(13) == 0) {
-        
+  if(digitalRead(13)==1) {
   // Check for incoming data
   if (Bluetooth.available() > 0) {
     dataIn = Bluetooth.readString();  // Read the data as string
@@ -185,7 +190,43 @@ void loop() {
       index = 0;  // Index to 0
     }
   }
+}else{
+  // Pass data to servos
+  if (data.startsWith("#")) {// Make sure data comes from glove
+    servo01.write(angz); // Waist
+    servo04.write(angx); // Pitch
+  }
+
+  
+  
+    // Keep reading from HC-05 and send to Arduino Serial Monitor
+    if (Bluetooth.available())
+    {
+      data = Bluetooth.readString();
+      angx = data.substring(1,4).toInt();
+      angy = data.substring(4,7).toInt();
+      angz = data.substring(7,10).toInt();
+      Serial.println(data); 
+      
+    }
+ 
+    // Keep reading from Arduino Serial Monitor and send to HC-05
+    if (Serial.available())
+    {
+        Bluetooth.write(Serial.read());  
+    }
 }
+}
+
+
+
+
+
+
+
+
+
+
 // Automatic mode custom function - run the saved steps
 void runservo() {
   while (dataIn != "RESET") {   // Run the steps over and over again until "RESET" button is pressed
@@ -300,26 +341,4 @@ void runservo() {
       }
     }
   }
-    }
-    else {
-        
-  // Pass data to servos
-  if (data.startsWith("#")) { // Make sure data comes from glove
-    servo01.write(angz);
-    servo04.write(angx);
-  }
-
-  
-  
-    // Keep reading from HC-05 and send to Arduino Serial Monitor
-    if (BTserial.available())
-    
-      data = BTserial.readString();
-      angx = data.substring(1,4).toInt();
-      angy = data.substring(4,7).toInt();
-      angz = data.substring(7,10).toInt();
-      Serial.println(data); 
-      
-    }
-    }
 }
