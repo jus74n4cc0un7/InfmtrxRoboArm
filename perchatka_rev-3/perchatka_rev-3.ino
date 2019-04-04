@@ -966,7 +966,7 @@ void loop()
   float angle_x = alpha*gyro_angle_x + (1.0 - alpha)*accel_angle_x;
   float angle_y = alpha*gyro_angle_y + (1.0 - alpha)*accel_angle_y;
   float angle_z = gyro_angle_z;  //Accelerometer doesn't give z-angle
-  angx = angle_x+90;
+  angx = angle_x+80;
   angy = angle_y+90;
   angz = angle_z+90;
   
@@ -1096,24 +1096,9 @@ int MPU6050_write_reg(int reg, uint8_t data)
 }
 
 void sendData() {//########################### SEND DATA ###########################
-  if (angz<0){
-    angz=0;
-  }
-  if (angz>180){
-    angz=180;
-  }
-  if (angx<40){
-    angx=40;
-  }
-  if (angx>140){
-    angx=140;
-  }
-  if (angy<0){
-    angy=0;
-  }
-  if (angy>180){
-    angy=180;
-  }
+  angx = constrain(angx, 0, 160);
+  angy = constrain(angy, 0, 180);
+  angz = constrain(angz, 0, 180);
 
   String ax = String(angx, DEC), ay = String(angy, DEC), az = String(angz, DEC);
   String info = "#";
