@@ -2,7 +2,6 @@
        DIY Arduino Robot Arm Smartphone Control  
         by Dejan, www.HowToMechatronics.com  
 */
-#include <SoftwareSerial.h>
 #include <Servo.h>
 Servo servo01;
 Servo servo02;
@@ -10,7 +9,6 @@ Servo servo03;
 Servo servo04;
 Servo servo05;
 Servo servo06;
-SoftwareSerial Bluetooth(3, 4); // Arduino(RX, TX) - HC-05 Bluetooth (TX, RX)
 int servo1Pos, servo2Pos, servo3Pos, servo4Pos, servo5Pos, servo6Pos; // current position
 int servo1PPos, servo2PPos, servo3PPos, servo4PPos, servo5PPos, servo6PPos; // previous position
 int servo01SP[50], servo02SP[50], servo03SP[50], servo04SP[50], servo05SP[50], servo06SP[50]; // for storing positions/steps
@@ -30,8 +28,8 @@ void setup() {
   servo05.attach(9);
   servo06.attach(10);
   pinMode(13, INPUT);
-  Bluetooth.begin(9600); // Default baud rate of the Bluetooth module
-  Bluetooth.setTimeout(50);
+  Serial2.begin(9600); // Default baud rate of the Bluetooth module
+  Serial2.setTimeout(50);
   delay(20);
   // Robot arm initial position
   servo1PPos = 90;
@@ -50,8 +48,8 @@ void setup() {
 void loop() {
   if(digitalRead(13)==1) { //################################################## APP MODE
   // Check for incoming data
-  if (Bluetooth.available() > 0) {
-    dataIn = Bluetooth.readString();  // Read the data as string
+  if (Serial2.available() > 0) {
+    dataIn = Serial2.readString();  // Read the data as string
     
     // If "Waist" slider has changed value - Move Servo 1 to position
     if (dataIn.startsWith("s1")) {
@@ -193,22 +191,28 @@ void loop() {
 }else{ //################################################################# GLOVE MODE 
   // Pass data to servos
   if (data.startsWith("#")) {// Make sure data comes from glove
-    if (abs(angzP-angz)>2) {
-      servo01.write(angz); // Waist
+    if (abs(angzP-angz)>1) {
+      servo01.write(angz); //      Waist
       angzP = angz;
+    }else{
+       servo01.write(angzP);
     }
-    if (abs(angxP-angx)>2) {
-      servo04.write(angx); // Pitch
+    
+    
+    if (abs(angxP-angx)>1) {
+      servo04.write(angx); //      Pitch
       angxP = angx;
+    }else{
+       servo04.write(angxP);
     }
   }
 
   
   
     // Keep reading from HC-05 and send to Arduino Serial Monitor
-    if (Bluetooth.available())
+    if (Serial2.available())
     {
-      data = Bluetooth.readString();
+      data = Serial2.readString();
       angx = data.substring(1,4).toInt();
       angy = data.substring(4,7).toInt();
       angz = data.substring(7,10).toInt();
@@ -219,7 +223,7 @@ void loop() {
     // Keep reading from Arduino Serial Monitor and send to HC-05
     if (Serial.available())
     {
-        Bluetooth.write(Serial.read());  
+        Serial2.write(Serial.read());  
     }
 }
 }
@@ -237,12 +241,12 @@ void loop() {
 void runservo() {
   while (dataIn != "RESET") {   // Run the steps over and over again until "RESET" button is pressed
     for (int i = 0; i <= index - 2; i++) {  // Run through all steps(index)
-      if (Bluetooth.available() > 0) {      // Check for incomding data
-        dataIn = Bluetooth.readString();
+      if (Serial2.available() > 0) {      // Check for incomding data
+        dataIn = Serial2.readString();
         if ( dataIn == "PAUSE") {           // If button "PAUSE" is pressed
           while (dataIn != "RUN") {         // Wait until "RUN" is pressed again
-            if (Bluetooth.available() > 0) {
-              dataIn = Bluetooth.readString();
+            if (Serial2.available() > 0) {
+              dataIn = Serial2.readString();
               if ( dataIn == "RESET") {     
                 break;
               }
