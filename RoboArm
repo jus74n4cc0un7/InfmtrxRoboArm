@@ -19,7 +19,7 @@ String dataIn = "";
 
 String data = "";
 int angz, angx, angy, pt01, pt02, pt03, pt04,
-angxP=0, angyP=0, angzP=0, pt01P, pt02P, pt03P, pt04P;
+angxP=0, angyP=0, angzP=0, pt01P=0, pt02P=0, pt03P=0, pt04P=0;
 
 void setup() {
   servo01.attach(5);
