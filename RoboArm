@@ -43,7 +43,7 @@ void setup() {
   servo04.write(servo4PPos);
   servo5PPos = 110;
   servo05.write(servo5PPos);
-  servo6PPos = 180;
+  servo6PPos = 90;
   servo06.write(servo6PPos);
 }
 void loop() {
