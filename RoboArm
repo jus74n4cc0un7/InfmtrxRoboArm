@@ -18,7 +18,8 @@ String dataIn = "";
 
 
 String data = "";
-int angz, angx, angy, angxP=0, angyP=0, angzP=0;
+int angz, angx, angy, pt01, pt02, pt03, pt04,
+angxP=0, angyP=0, angzP=0, pt01P, pt02P, pt03P, pt04P;
 
 void setup() {
   servo01.attach(5);
@@ -205,6 +206,38 @@ void loop() {
     }else{
        servo04.write(angxP);
     }
+    
+    
+    if (abs(pt01P-pt01)>1) {
+       servo06.write(pt01);
+       pt01P = pt01;
+    }else{
+       servo06.write(pt01P);
+    }
+    
+    
+    if (abs(pt02P-pt02)>1) {
+       servo02.write(pt02);
+       pt02P = pt02;
+    }else{
+       servo02.write(angxP);
+    }
+    
+    
+    if (abs(pt03P-pt03)>1) {
+       servo03.write(pt03);
+       pt03P = pt03;
+    }else{
+       servo03.write(pt03P);
+    }
+    
+    
+    if (abs(pt04P-pt04)>1) {
+       servo05.write(pt04);
+       pt04P = pt04;
+    }else{
+       servo05.write(pt04P);
+    }
   }
 
   
@@ -216,6 +249,10 @@ void loop() {
       angx = data.substring(1,4).toInt();
       angy = data.substring(4,7).toInt();
       angz = data.substring(7,10).toInt();
+      pt01 = data.substring(10,13).toInt();
+      pt02 = data.substring(13,16).toInt();
+      pt03 = data.substring(16,19).toInt();
+      pt04 = data.substring(19,22).toInt();
       Serial.println(data); 
       
     }
